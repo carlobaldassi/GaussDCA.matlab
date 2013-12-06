@@ -2,20 +2,29 @@ function R = gDCA(filename, varargin)
 
 % GDCA performs Gaussian Direct Coupling Analysis on a given FASTA file
 %
-% This function reads a filename in FASTA format and returns
-% the inferred direct information matrix.
+% This function reads a filename in FASTA format and returns a ranking
+% of residue pairs, as a matrix with 3 columns. Each column contains
+% two indices i and j and a score. The rows are sorted with higer scores
+% on top.
 %
 % The input file can be in plain text format or, if the provided
 % MEX file was compiled, compressed via gzip.
 %
 % Example: GDCA('PF00014.fasta')
 %
-% Two optional arguments control the pseudocount and reweighting parameters,
-% respectively. Pseudocount must take values between 0 and 1; reweighting
-% can be set to false (disabled) or true (enabled); the defaults are 0.3
-% and true.
+% Some optional parameters can be passed:
 %
-% Example: GDCA('PF00014.fasta', 0.3, true)
+%   * pseudocount: a real value between 0 and 1, defaults to 0.8
+%   * score: a string which determines the scoring function; must be either
+%            'frob' for Frobenius norm (this is the default) or 'DI for
+%            Direct Information
+%   * max_gap_fraction: a real value between 0 and 1; controls the threshold
+%                       for filtering sequences with too many gaps. Defaults
+%                       to 0.9
+%   * theta: can be either 'auto' or a real number between 0 and 1. Controls
+%            the reweighting process. Defaults to 'auto'.
+%
+% Example: GDCA('PF00014.fasta', 'pseudocount', 0.2, 'score', 'DI')
 %
 % This code accompanies the paper "Fast and accurate multivariate Gaussian
 % modeling of protein families: Predicting residue contacts and
