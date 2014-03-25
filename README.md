@@ -49,10 +49,12 @@ Usage
 This software provides one main function, `gDCA(filname::String, ...)`. This
 function takes the name of a (possibly gzipped) FASTA file, and returns
 predicted contact ranking, in the form of a matrix with three columns. The first
-two columns containin indices `i` and `j` (with `i < j + 4`), the third one
-contaitns a score. The indices start counting from 1, and indicate pair of
-residue positions in the given alignment. The rows of the matrix are sorted by
-score in descending order, such that predicted contacts should come up on top.  
+two columns containin indices `i` and `j` (with `i < j`), the third one
+contaitns a score. The indices start counting from 1, and denote pair of
+residue positions in the given alignment; pairs which are separated by less than
+a given number of residues (by default 5) are filtered out. The rows of the matrix
+are sorted by score in descending order, such that predicted contacts should come
+up on top.
 
 The `gDCA` function takes some additional, optional keyword arguments:
 
@@ -69,6 +71,9 @@ The `gDCA` function takes some additional, optional keyword arguments:
  * `score`: the scoring function to use. There are two possibilities, `'DI'` for
             the Direct Information, and `'frob'` for the Frobenius norm. The
             default is `'frob'`.
+ * `min_separation`: the minimum separation between residues in the output
+                     ranking. Must be >= `1`. The default
+                     is `5`.
 
 Using gzipped FASTA files is only supported if the MEX module for fasta reading
 is compiled.

@@ -14,15 +14,21 @@ function R = gDCA(filename, varargin)
 %
 % Some optional parameters can be passed:
 %
-%   * pseudocount: a real value between 0 and 1, defaults to 0.8
-%   * score: a string which determines the scoring function; must be either
-%            'frob' for Frobenius norm (this is the default) or 'DI for
-%            Direct Information
-%   * max_gap_fraction: a real value between 0 and 1; controls the threshold
-%                       for filtering sequences with too many gaps. Defaults
-%                       to 0.9
-%   * theta: can be either 'auto' or a real number between 0 and 1. Controls
-%            the reweighting process. Defaults to 'auto'.
+%   * pseudocount: the value of the pseudo-count parameter, between 0 and 1.
+%                  the default is 0.8, which gives good results when the
+%                  Frobenius norm score is used (see below); a good value for the
+%                  Direct Information score is 0.2.
+%   * theta: the value of the similarity threshold. By default it is 'auto',
+%            which means it will be automatically computed (this takes additional
+%            time); otherwise, a real value between 0 and 1 can be given.
+%   * max_gap_fraction: maximum fraction of gap symbols in a sequence; sequences
+%                       which exceed this threshold are discarded. The default
+%                       value is 0.9.
+%   * score: the scoring function to use. There are two possibilities, 'DI' for
+%            the Direct Information, and 'frob' for the Frobenius norm. The
+%            default is 'frob'.
+%   * min_separation`: the minimum separation between residues in the output
+%                      ranking. Must be >= 1. The default is 5.
 %
 % Example: GDCA('PF00014.fasta', 'pseudocount', 0.2, 'score', 'DI')
 %
@@ -40,6 +46,7 @@ function R = gDCA(filename, varargin)
     def_max_gap_fraction = 0.9;
     def_score = 'frob';
     def_theta = 'auto';
+    def_min_separation = 5;
 
     valid_scores = {'frob', 'DI'};
     valid_thetas = {'auto'};
@@ -50,6 +57,8 @@ function R = gDCA(filename, varargin)
     addOptional(p, 'score', def_score, @(x) any(validatestring(x, valid_scores)));
     addOptional(p, 'theta', def_theta, ...
         @(x) ((isnumeric(x) && x >= 0 && x <= 1) || any(validatestring(x, valid_thetas))));
+    addOptional(p, 'min_separation', def_min_separation, ...
+        @(x) (isnumeric(x) && x >= 1));
 
     parse(p, filename, varargin{:});
 
@@ -63,6 +72,7 @@ function R = gDCA(filename, varargin)
     max_gap_fraction = p.Results.max_gap_fraction;
     score = validatestring(p.Results.score, valid_scores);
     theta = p.Results.theta;
+    min_separation = p.Results.min_separation;
 
     path(path, 'modules');
 
@@ -80,7 +90,7 @@ function R = gDCA(filename, varargin)
 
     S = correct_APC(S);
 
-    R = compute_ranking(S);
+    R = compute_ranking(S, min_separation);
 end
 
 function [mJ, C] = compute_J(Z, pc, theta)
@@ -201,9 +211,6 @@ function S = correct_APC(S)
 end
 
 function R = compute_ranking(S, min_separation)
-    if nargin < 2
-        min_separation = 5;
-    end
     N = size(S, 1);
     UR = zeros((N-min_separation)*(N-min_separation+1) / 2, 3);
 
