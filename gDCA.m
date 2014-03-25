@@ -32,11 +32,11 @@ function R = gDCA(filename, varargin)
 %
 % Example: GDCA('PF00014.fasta', 'pseudocount', 0.2, 'score', 'DI')
 %
-% This code accompanies the paper "Fast and accurate multivariate Gaussian
-% modeling of protein families: Predicting residue contacts and
+% This code accompanies the paper "Fast and accurate multivariate
+% Gaussian modeling of protein families: Predicting residue contacts and
 % protein-interaction partners" by Carlo Baldassi, Marco Zamparo, Christoph
 % Feinauer, Andrea Procaccini, Riccardo Zecchina, Martin Weigt and Andrea
-% Pagnani, submitted to PLOS ONE (2013).
+% Pagnani, (2014) PLoS ONE 9(3): e92721. %doi:10.1371/journal.pone.0092721
 %
 % The code is released under the terms of the GNU General Public License
 % version 3 or, at your option, any later version.
