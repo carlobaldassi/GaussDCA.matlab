@@ -29,7 +29,7 @@ CFLAGS = -Wall -O3 -g -fPIC -lm -I${MATLAB_DIR}/extern/include -std=c99 -DPACKBI
 
 ifeq ($(OPENMP),1)
   CFLAGS += -fopenmp -DOMP
-  LDFLAGS += -fopenmp
+  LDFLAGS += -fopenmp -lgomp
 endif
 
 .PHONY: all matlab-module1 matlab-module2
@@ -44,12 +44,12 @@ $(allmodules) :
 matlab-module1: .mlab1
 
 .mlab1: ${source_name1}.c
-	${MATLAB_DIR}/bin/mex -v -largeArrayDims "CFLAGS=\$$CFLAGS ${CFLAGS}" "LDFLAGS=\$$LDFLAGS ${LDFLAGS}" -lgomp -lut ${source_name1}.c -output ${output_name1} && touch .mlab1
+	${MATLAB_DIR}/bin/mex -v -largeArrayDims "CFLAGS=\$$CFLAGS ${CFLAGS}" "LDFLAGS=\$$LDFLAGS ${LDFLAGS}" -lut ${source_name1}.c -output ${output_name1} && touch .mlab1
 
 matlab-module2: .mlab2
 
 .mlab2: ${source_name2}.c
-	${MATLAB_DIR}/bin/mex -v -largeArrayDims "CFLAGS=\$$CFLAGS ${CFLAGS}" "LDFLAGS=\$$LDFLAGS ${LDFLAGS}" -lz -lgomp -lut ${source_name2}.c -output ${output_name2} && touch .mlab2
+	${MATLAB_DIR}/bin/mex -v -largeArrayDims "CFLAGS=\$$CFLAGS ${CFLAGS}" "LDFLAGS=\$$LDFLAGS ${LDFLAGS}" -lz -lut ${source_name2}.c -output ${output_name2} && touch .mlab2
 
 clean:
 	rm -f *.o .mlab* *.mex*
